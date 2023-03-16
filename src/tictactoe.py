@@ -80,13 +80,30 @@ class Board:
             player_token (str): Player token to pass to `self._encode()`
 
         Returns:
-            Bool: True if `self.board` is a winnder for given `player_token`,
+            Bool: True if `self.board` is a winner for given `player_token`,
                 else False.
         '''
         for winner in self.WINNERS:
             if winner & self._encode(player_token) == winner:
                 return True
         return False
+
+    def is_stalemate(self, player_tokens):
+        '''
+        Function that returns whether game has reached stalemate.
+
+        Parameters:
+            player_tokens (List): list of player tokens
+
+        Returns:
+            Bool: True if self.board can't be a winner for either player
+        '''
+
+        for player_token in player_tokens:
+            for winner in self.WINNERS:
+                if (self._encode(player_token) | self._encode(' ')) & winner in self.WINNERS:
+                    return False 
+        return True
 
     def _is_valid_coord(self, coords):
         '''
@@ -135,11 +152,87 @@ class Board:
         '''
 
         row, col = coords
-        if self._is_valid_coord(coords) & self._is_empty(coords):
+        if self._is_valid_coord(coords) and self._is_empty(coords):
             self.board[row][col] = player_token
             return True
         else:
             return False
+
+
+class Game:
+    '''
+    A class to represent the game. Contains a board object and players objects.
+    '''
+
+    def __init__(self):
+        self.players = []
+        self.board = Board()
+        self.move_count = 0
+
+    def run_game(self):
+        
+        # Create 2 default players
+        self.players.extend([Player('player1', 'X'), Player('player2', 'O')])
+
+        # Game loop 
+        while True:
+            
+            # Display board
+            print(self.board)
+
+            # Prompt current player for a move and validate
+            while True:
+                print("{} is up".format(self.get_current_player_name()))
+                cur_row = int(input("Row? "))
+                cur_col = int(input("Col? "))
+
+                if self.board.update_board(self.get_current_player_token(), (cur_row, cur_col)):
+                    break
+                else:
+                    print("Error, please try again")
+
+            # If `self.move_count` >= 4, check if game is over
+            if self.move_count >= 4:
+                
+                # Check to see if current player won. If so, break
+                if self.board.is_winner(self.get_current_player_token()):
+                    print("{} won! Game over".format(self.get_current_player_name()))
+                    break
+
+                # Check if stalemate. If so, break.
+                elif self.board.is_stalemate(self.get_player_tokens()):
+                    print("Stalemate. Game over.")
+                    break
+
+            self.move_count += 1
+
+    def get_player_tokens(self):
+        return [player.token for player in self.players]
+
+    def get_current_player(self):
+        return self.players[self.move_count % 2]
+
+    def get_current_player_token(self):
+        return self.get_current_player().get_token()
+
+    def get_current_player_name(self):
+        return self.get_current_player().get_name()
+
+
+class Player:
+    '''
+    A class to represent each player. Contains player token and name.
+    '''
+
+    def __init__(self, name, token):
+        self.name = name
+        self.token = token
+
+    def get_token(self):
+        return self.token
+
+    def get_name(self):
+        return self.name
 
 
 if __name__ == '__main__':
@@ -173,3 +266,15 @@ if __name__ == '__main__':
     print("Update board at (1, 1) for 'X'")
     print(b.update_board('X', (1, 1)))
     print(b)
+
+    stalemate = Board()
+    stalemate.board = [['X', ' ', 'O'],['O', 'O', 'X'],['X', 'X', 'O']]
+    print("Is stalemate board a winner? {}".format(stalemate.is_winner('X')))
+    print("Is stalemate board a stalemate? {}".format(stalemate.is_stalemate(['X', 'Y'])))
+
+    print()
+    print()
+
+    mygame = Game()
+
+    mygame.run_game()
