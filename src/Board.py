@@ -39,7 +39,7 @@ class Board:
         return out
 
 
-    def flatten(self):
+    def _flatten(self):
         '''
         Helper function to flatten `self.board` as List of length 9.
 
@@ -49,7 +49,7 @@ class Board:
         return [item for row in self.board for item in row]
 
 
-    def encode(self, player_token):
+    def _encode(self, player_token):
         '''
         Helper function to encode flattened `self.board` as a integer encoding
         from binary encoding.
@@ -63,7 +63,7 @@ class Board:
                 player indicated by `player_token`
         '''
         binseq = '0b'
-        for char in self.flatten():
+        for char in self._flatten():
             if char == player_token:
                 binseq += '1'
             else:
@@ -77,17 +77,69 @@ class Board:
         `player_token`.
         
         Parameters:
-            player_token (str): Player token to pass to `self.encode()`
+            player_token (str): Player token to pass to `self._encode()`
 
         Returns:
             Bool: True if `self.board` is a winnder for given `player_token`,
                 else False.
         '''
         for winner in self.WINNERS:
-            if winner & self.encode(player_token) == winner:
+            if winner & self._encode(player_token) == winner:
                 return True
         return False
 
+    def _is_valid_coord(self, coords):
+        '''
+        Helper function to validate `coords` tuple.
+
+        Parameters:
+            coords (tuple)
+
+        Returns:
+            Boolean: True if `coords` values are integers between [0, 3)
+        '''
+        
+        row, col = coords
+        if (type(row) != int) or (type(col) != int):
+            return False
+        if (row < 0) or (row > 2) or (col < 0) or (col > 2):
+            return False
+        return True
+
+    def _is_empty(self, coords):
+        '''
+        Helper function to validate target coordinate.
+
+        Parameters:
+            coords (tuple): (row, column)
+
+        Returns:
+            Boolean: True if `coord` position is empty, else False
+        '''
+
+        row, col = coords
+        return self.board[row][col] == ' '
+
+    def update_board(self, player_token, coords):
+        '''
+        Function to update board at `coords` for player indicated by 
+        `player_token`. Returns True if successful; returns False otherwise
+        (e.g., if that position is invalid).
+
+        Parameters:
+            player_token (str): Player token
+            coords (tuple): Format (row, column)
+
+        Returns:
+            Bool: True if update was successful; false if position was invalid.
+        '''
+
+        row, col = coords
+        if self._is_valid_coord(coords) & self._is_empty(coords):
+            self.board[row][col] = player_token
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
@@ -100,7 +152,7 @@ if __name__ == '__main__':
     b.board[0][2] = 'X'
 
     print("Flattened")
-    print(b.flatten())
+    print(b._flatten())
 
     print()
     print()
@@ -108,8 +160,16 @@ if __name__ == '__main__':
 
     print()
     print()
-    print(b.encode('X'))
-    print(b.encode('O'))
+    print(b._encode('X'))
+    print(b._encode('O'))
 
     print("X is winner? {}".format(b.is_winner('X')))
     print("Y is winner? {}".format(b.is_winner('Y')))
+
+    print("Update board at (1, 0) for 'Y'")
+    print(b.update_board('Y', (1, 0)))
+    print(b)
+
+    print("Update board at (1, 1) for 'X'")
+    print(b.update_board('X', (1, 1)))
+    print(b)
