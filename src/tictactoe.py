@@ -49,7 +49,7 @@ class Board:
     def _encode(self, player_token):
         '''
         Helper function to encode `self.board` as a integer encoding
-        from binary encoding.
+        from a binary encoding.
 
         Parameters:
             player_token (str): Player token (e.g., 'X' or 'O') to use to 
@@ -70,8 +70,7 @@ class Board:
 
     def is_winner(self, player_token):
         '''
-        Helper function to determine whether `self.board` is a winner given
-        `player_token`.
+        Determines whether `self.board` is a winner given `player_token`.
         
         Parameters:
             player_token (str): Player token to pass to `self._encode()`
@@ -85,9 +84,12 @@ class Board:
                 return True
         return False
 
+
     def is_stalemate(self, player_tokens):
         '''
-        Function that returns whether game has reached stalemate.
+        Determinds whether game has reached stalemate using bitwise operations:
+        If the possible outcomes for each player (player's position OR all 
+        open spaces) include a winning board, then there isn't a stalemate.
 
         Parameters:
             player_tokens (List): list of player tokens
@@ -101,6 +103,7 @@ class Board:
                 if (self._encode(player_token) | self._encode(' ')) & winner in self.WINNERS:
                     return False 
         return True
+
 
     def _is_valid_coord(self, coords):
         '''
@@ -120,6 +123,7 @@ class Board:
             return False
         return True
 
+
     def _is_empty(self, coords):
         '''
         Helper function to validate target coordinate.
@@ -132,6 +136,7 @@ class Board:
         '''
 
         return self.board[self._coords_to_index(coords)] == ' '
+
 
     def _coords_to_index(self, coords):
         '''
@@ -146,6 +151,7 @@ class Board:
         '''
         row, col = coords
         return row * 3 + col
+        
 
     def update_board(self, player_token, coords):
         '''
@@ -187,11 +193,12 @@ class Game:
         while True:
             
             # Display board
+            print('\n-------------------------\n')
             print(self.board)
 
             # Prompt current player for a move and validate
             while True:
-                print("{} is up".format(self.get_current_player_name()))
+                print("\n{} is up".format(self.get_current_player_name()))
                 cur_row = int(input("Row? "))
                 cur_col = int(input("Col? "))
 
@@ -266,7 +273,7 @@ if __name__ == '__main__':
     print("Update board at (1, 1) for 'Y'")
     print(b.update_board('Y', (1, 1)))
     print(b)
-    '''
+    
     print("Update board at (1, 1) for 'X'")
     print(b.update_board('X', (1, 1)))
     print(b)
@@ -282,4 +289,4 @@ if __name__ == '__main__':
     mygame = Game()
 
     mygame.run_game()
-    '''
+    
