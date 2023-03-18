@@ -237,7 +237,7 @@ class Game:
         while True:
             print("\n{} is up".format(self.get_current_player_name()))
 
-            # If the current player is an AI
+            # If the current player is an AI (future implementation)
             if self.get_current_player().ai:
                 pass
                 # Get open slots and choose one
@@ -265,6 +265,8 @@ class Player:
     def __init__(self, name, token, ai=False, ai_strategy=None):
         self.name = name
         self.token = token
+
+        # For future AI player implementation
         self.ai = ai
         self.ai_strategy = ai_strategy
 
