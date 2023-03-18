@@ -193,6 +193,10 @@ class Game:
 
     def run_game(self):
         
+        # Game over message
+        game_over_msg = ''
+        
+        
         # Game loop 
         while True:
 
@@ -202,6 +206,11 @@ class Game:
             # Display board
             print(self.board)
 
+            # If game over, display message and break
+            if game_over_msg:
+                print(game_over_msg)
+                break
+
             # Prompt current player
             self.prompt_current_player()
 
@@ -210,19 +219,14 @@ class Game:
                 
                 # Check to see if current player won. If so, break
                 if self.board.is_winner(self.get_current_player_token()):
-                    print("{} won! Game over".format(self.get_current_player_name()))
-                    break
+                    game_over_msg = "{} won! Game over".format(self.get_current_player_name())
 
                 # Check if stalemate. If so, break.
                 elif self.board.is_stalemate(self.get_player_tokens()):
-                    print("Stalemate. Game over.")
-                    break
+                    game_over_msg = "Stalemate. Game over."
 
             # Increment move_count
             self.move_count += 1
-
-        # Display final board
-        print(self.board)
 
     def prompt_current_player(self):
         '''
