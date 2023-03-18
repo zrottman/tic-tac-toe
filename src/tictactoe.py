@@ -3,13 +3,11 @@ class Board:
     A class representing the tictactoe board.
 
     Attributes:
-        board (List[List[str]]): A 3x3 matrix, where the outer list
-            represents rows and the inner list represents columns.
+        board (List[str]): A list of length 0 to represent a 3x3 matrix.
         WINNERS (List): A constant containing binary encodings of the 8
             winning board permutations.
 
     Methods:
-        flatten (List): Returns flat list of `self.board` matrix
         encode (str): Returns binary encoding of `self.board` given
             player token parameter
         is_winner (bool): Returns True if binary encoding of `self.board` 
@@ -21,7 +19,7 @@ class Board:
         Constructor function that initializes Board object with empty matrix
         and constant containing all winning board permutations.
         '''
-        self.board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+        self.board = [' ',' ',' ',' ',' ',' ',' ',' ',' ']
         self.WINNERS = [
             0b111000000, 0b000111000, 0b000000111, 0b100100100,
             0b010010010, 0b001001001, 0b100010001, 0b001010100
@@ -33,26 +31,25 @@ class Board:
         String function that returns pretty formatted version of self.board.
         '''
         out = '   |   |   \n'
-        rows = [' ' + ' | '.join(row) + ' \n' for row in self.board]
+        row_start = 0 # Pointer to keep track of where each row starts
+        rows = []
+
+        # Separate `self.board` list into three rows 
+        while row_start < len(self.board):
+            rows.append(' ' + ' | '.join(self.board[row_start:row_start + 3]) + ' \n')
+            row_start += 3
+
+        # Join rows
         out += '___|___|___\n   |   |   \n'.join(rows)
         out += '   |   |   \n'
+        
         return out
-
-
-    def _flatten(self):
-        '''
-        Helper function to flatten `self.board` as List of length 9.
-
-        Returns:
-            List: length 9
-        '''
-        return [item for row in self.board for item in row]
 
 
     def _encode(self, player_token):
         '''
-        Helper function to encode flattened `self.board` as a integer encoding
-        from binary encoding.
+        Helper function to encode `self.board` as a integer encoding
+        from a binary encoding.
 
         Parameters:
             player_token (str): Player token (e.g., 'X' or 'O') to use to 
@@ -63,7 +60,7 @@ class Board:
                 player indicated by `player_token`
         '''
         binseq = '0b'
-        for char in self._flatten():
+        for char in self.board:
             if char == player_token:
                 binseq += '1'
             else:
@@ -73,8 +70,7 @@ class Board:
 
     def is_winner(self, player_token):
         '''
-        Helper function to determine whether `self.board` is a winner given
-        `player_token`.
+        Determines whether `self.board` is a winner given `player_token`.
         
         Parameters:
             player_token (str): Player token to pass to `self._encode()`
@@ -88,9 +84,12 @@ class Board:
                 return True
         return False
 
+
     def is_stalemate(self, player_tokens):
         '''
-        Function that returns whether game has reached stalemate.
+        Determinds whether game has reached stalemate using bitwise operations:
+        If the possible outcomes for each player (player's position OR all 
+        open spaces) include a winning board, then there isn't a stalemate.
 
         Parameters:
             player_tokens (List): list of player tokens
@@ -104,6 +103,7 @@ class Board:
                 if (self._encode(player_token) | self._encode(' ')) & winner in self.WINNERS:
                     return False 
         return True
+
 
     def _is_valid_coord(self, coords):
         '''
@@ -123,6 +123,7 @@ class Board:
             return False
         return True
 
+
     def _is_empty(self, coords):
         '''
         Helper function to validate target coordinate.
@@ -134,8 +135,23 @@ class Board:
             Boolean: True if `coord` position is empty, else False
         '''
 
+        return self.board[self._coords_to_index(coords)] == ' '
+
+
+    def _coords_to_index(self, coords):
+        '''
+        Helper function to return index of `self.board` based on (row, col)
+        coords.
+
+        Parameters:
+            coords (tuple): (row, column)
+
+        Returns:
+            int: Index 0-8
+        '''
         row, col = coords
-        return self.board[row][col] == ' '
+        return row * 3 + col
+        
 
     def update_board(self, player_token, coords):
         '''
@@ -151,9 +167,8 @@ class Board:
             Bool: True if update was successful; false if position was invalid.
         '''
 
-        row, col = coords
         if self._is_valid_coord(coords) and self._is_empty(coords):
-            self.board[row][col] = player_token
+            self.board[self._coords_to_index(coords)] = player_token
             return True
         else:
             return False
@@ -178,11 +193,12 @@ class Game:
         while True:
             
             # Display board
+            print('\n-------------------------\n')
             print(self.board)
 
             # Prompt current player for a move and validate
             while True:
-                print("{} is up".format(self.get_current_player_name()))
+                print("\n{} is up".format(self.get_current_player_name()))
                 cur_row = int(input("Row? "))
                 cur_col = int(input("Col? "))
 
@@ -238,17 +254,11 @@ class Player:
 if __name__ == '__main__':
     
     b = Board()
-    b.board[0][1] = 'X'
-    b.board[1][1] = 'O'
-    b.board[0][0] = 'X'
-    b.board[2][0] = 'O'
-    b.board[0][2] = 'X'
-
-    print("Flattened")
-    print(b._flatten())
-
-    print()
-    print()
+    b.board[0] = 'X'
+    b.board[5] = 'O'
+    b.board[8] = 'X'
+    b.board[3] = 'O'
+    b.board[2] = 'X'
     print(b)
 
     print()
@@ -259,10 +269,11 @@ if __name__ == '__main__':
     print("X is winner? {}".format(b.is_winner('X')))
     print("Y is winner? {}".format(b.is_winner('Y')))
 
-    print("Update board at (1, 0) for 'Y'")
-    print(b.update_board('Y', (1, 0)))
-    print(b)
 
+    print("Update board at (1, 1) for 'Y'")
+    print(b.update_board('Y', (1, 1)))
+    print(b)
+    
     print("Update board at (1, 1) for 'X'")
     print(b.update_board('X', (1, 1)))
     print(b)
@@ -278,3 +289,4 @@ if __name__ == '__main__':
     mygame = Game()
 
     mygame.run_game()
+    
