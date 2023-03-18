@@ -3,8 +3,8 @@ class Board:
     A class representing the tictactoe board.
 
     Attributes:
-        board (List[str]): A list of length 0 to represent a 3x3 matrix.
-        WINNERS (List): A constant containing binary encodings of the 8
+        board (list[str]): A list of length 9 representing a 3x3 matrix.
+        WINNERS (list): A constant containing binary encodings of the 8
             winning board permutations.
 
     Methods:
@@ -46,7 +46,7 @@ class Board:
         return out
 
 
-    def _encode(self, player_token):
+    def _encode_board(self, player_token):
         '''
         Helper function to encode `self.board` as a integer encoding
         from a binary encoding.
@@ -59,37 +59,42 @@ class Board:
             Int : Integer equivalent of binary encoding of board position for
                 player indicated by `player_token`
         '''
+        # Initialize output string with binary prefix
         binseq = '0b'
+
+        # Loop through `self.board` and produce binary encoding for `player_token`
         for char in self.board:
             if char == player_token:
                 binseq += '1'
             else:
                 binseq += '0'
+
+        # Return integer equivalent of binary encoding
         return int(binseq, 2)
 
 
     def is_winner(self, player_token):
         '''
-        Determines whether `self.board` is a winner given `player_token`.
+        Determines whether `self.board` is a winner for player with `player_token`.
         
         Parameters:
-            player_token (str): Player token to pass to `self._encode()`
+            player_token (str): Player token to pass to `self._encode_board()`
 
         Returns:
             Bool: True if `self.board` is a winner for given `player_token`,
                 else False.
         '''
         for winner in self.WINNERS:
-            if winner & self._encode(player_token) == winner:
+            if winner & self._encode_board(player_token) == winner:
                 return True
         return False
 
 
     def is_stalemate(self, player_tokens):
         '''
-        Determinds whether game has reached stalemate using bitwise operations:
-        If the possible outcomes for each player (player's position OR all 
-        open spaces) include a winning board, then there isn't a stalemate.
+        Determines whether game has reached stalemate using bitwise operations.
+        For each player, checks if that player's current board position plus
+        all unoccupied spaces matches a potential winner in `self.WINENRS`.
 
         Parameters:
             player_tokens (List): list of player tokens
@@ -97,10 +102,9 @@ class Board:
         Returns:
             Bool: True if self.board can't be a winner for either player
         '''
-
         for player_token in player_tokens:
             for winner in self.WINNERS:
-                if (self._encode(player_token) | self._encode(' ')) & winner in self.WINNERS:
+                if (self._encode_board(player_token) | self._encode_board(' ')) & winner in self.WINNERS:
                     return False 
         return True
 
@@ -124,9 +128,9 @@ class Board:
         return True
 
 
-    def _is_empty(self, coords):
+    def _is_unoccupied(self, coords):
         '''
-        Helper function to validate target coordinate.
+        Helper function to validate whether target coordinates are unoccupied.
 
         Parameters:
             coords (tuple): (row, column)
@@ -167,7 +171,7 @@ class Board:
             Bool: True if update was successful; false if position was invalid.
         '''
 
-        if self._is_valid_coord(coords) and self._is_empty(coords):
+        if self._is_valid_coord(coords) and self._is_unoccupied(coords):
             self.board[self._coords_to_index(coords)] = player_token
             return True
         else:
@@ -263,8 +267,8 @@ if __name__ == '__main__':
 
     print()
     print()
-    print(b._encode('X'))
-    print(b._encode('O'))
+    print(b._encode_board('X'))
+    print(b._encode_board('O'))
 
     print("X is winner? {}".format(b.is_winner('X')))
     print("Y is winner? {}".format(b.is_winner('Y')))
