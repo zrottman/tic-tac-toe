@@ -198,22 +198,14 @@ class Game:
         # Game loop 
         while True:
 
+            # Clear prompt
             os.system('clear')
             
             # Display board
-            print('\n-------------------------\n')
             print(self.board)
 
-            # Prompt current player for a move and validate
-            while True:
-                print("\n{} is up".format(self.get_current_player_name()))
-                cur_row = int(input("Row? "))
-                cur_col = int(input("Col? "))
-
-                if self.board.update_board(self.get_current_player_token(), (cur_row, cur_col)):
-                    break
-                else:
-                    print("Error, please try again")
+            # Prompt current player
+            self.prompt_current_player()
 
             # If `self.move_count` >= 4, check if game is over
             if self.move_count >= 4:
@@ -229,6 +221,22 @@ class Game:
                     break
 
             self.move_count += 1
+
+    def prompt_current_player(self):
+        '''
+        Helper function to prompt current player and validate input.
+        '''
+        # Keep prompting until there's a valid response
+        while True:
+            print("\n{} is up".format(self.get_current_player_name()))
+            cur_row = int(input("Row (0-2)? "))
+            cur_col = int(input("Col (0-2? "))
+
+            # Validate input
+            if self.board.update_board(self.get_current_player_token(), (cur_row, cur_col)):
+                break
+            else:
+                print("Error, please try again")
 
     def get_player_tokens(self): return [player.token for player in self.players]
     def get_current_player(self): return self.players[self.move_count % 2]
