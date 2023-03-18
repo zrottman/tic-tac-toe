@@ -270,7 +270,16 @@ class Player:
 
 if __name__ == '__main__':
     
-    mygame = Game()
+    new_game = 'y'
 
-    mygame.run_game()
+    while new_game != 'n':
+    
+        # Instantiate game
+        mygame = Game()
+
+        # Run game
+        mygame.run_game()
+
+        # Prompt user for new game
+        new_game = input("Play again? ('n' to quit): ")
     
