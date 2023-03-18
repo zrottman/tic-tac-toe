@@ -191,11 +191,11 @@ class Game:
         self.board = Board()
         self.move_count = 0
 
+
     def run_game(self):
         
         # Game over message
         game_over_msg = ''
-        
         
         # Game loop 
         while True:
@@ -228,6 +228,7 @@ class Game:
             # Increment move_count
             self.move_count += 1
 
+
     def prompt_current_player(self):
         '''
         Helper function to prompt current player and validate input.
@@ -235,8 +236,14 @@ class Game:
         # Keep prompting until there's a valid response
         while True:
             print("\n{} is up".format(self.get_current_player_name()))
-            cur_row = int(input("Row (0-2)? "))
-            cur_col = int(input("Col (0-2? "))
+
+            # If the current player is an AI
+            if self.get_current_player().ai:
+                pass
+                # Get open slots and choose one
+            else:
+                cur_row = int(input("Row (0-2)? "))
+                cur_col = int(input("Col (0-2? "))
 
             # Validate input
             if self.board.update_board(self.get_current_player_token(), (cur_row, cur_col)):
