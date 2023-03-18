@@ -185,16 +185,14 @@ class Game:
     A class to represent the game. Contains a board object and players objects.
     '''
 
-    def __init__(self):
-        self.players = []
+    def __init__(self, players=None):
+        default_players = [Player('player1', 'X'), Player('player2', 'O')]
+        self.players = players if players else default_players
         self.board = Board()
         self.move_count = 0
 
     def run_game(self):
         
-        # Create 2 default players
-        self.players.extend([Player('player1', 'X'), Player('player2', 'O')])
-
         # Game loop 
         while True:
 
@@ -220,7 +218,11 @@ class Game:
                     print("Stalemate. Game over.")
                     break
 
+            # Increment move_count
             self.move_count += 1
+
+        # Display final board
+        print(self.board)
 
     def prompt_current_player(self):
         '''
