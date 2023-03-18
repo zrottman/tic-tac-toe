@@ -1,3 +1,5 @@
+import os
+
 class Board:
     '''
     A class representing the tictactoe board.
@@ -195,6 +197,8 @@ class Game:
 
         # Game loop 
         while True:
+
+            os.system('clear')
             
             # Display board
             print('\n-------------------------\n')
@@ -257,39 +261,6 @@ class Player:
 
 if __name__ == '__main__':
     
-    b = Board()
-    b.board[0] = 'X'
-    b.board[5] = 'O'
-    b.board[8] = 'X'
-    b.board[3] = 'O'
-    b.board[2] = 'X'
-    print(b)
-
-    print()
-    print()
-    print(b._encode_board('X'))
-    print(b._encode_board('O'))
-
-    print("X is winner? {}".format(b.is_winner('X')))
-    print("Y is winner? {}".format(b.is_winner('Y')))
-
-
-    print("Update board at (1, 1) for 'Y'")
-    print(b.update_board('Y', (1, 1)))
-    print(b)
-    
-    print("Update board at (1, 1) for 'X'")
-    print(b.update_board('X', (1, 1)))
-    print(b)
-
-    stalemate = Board()
-    stalemate.board = [['X', ' ', 'O'],['O', 'O', 'X'],['X', 'X', 'O']]
-    print("Is stalemate board a winner? {}".format(stalemate.is_winner('X')))
-    print("Is stalemate board a stalemate? {}".format(stalemate.is_stalemate(['X', 'Y'])))
-
-    print()
-    print()
-
     mygame = Game()
 
     mygame.run_game()
