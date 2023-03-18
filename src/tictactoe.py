@@ -230,17 +230,10 @@ class Game:
 
             self.move_count += 1
 
-    def get_player_tokens(self):
-        return [player.token for player in self.players]
-
-    def get_current_player(self):
-        return self.players[self.move_count % 2]
-
-    def get_current_player_token(self):
-        return self.get_current_player().get_token()
-
-    def get_current_player_name(self):
-        return self.get_current_player().get_name()
+    def get_player_tokens(self): return [player.token for player in self.players]
+    def get_current_player(self): return self.players[self.move_count % 2]
+    def get_current_player_token(self): return self.get_current_player().get_token()
+    def get_current_player_name(self): return self.get_current_player().get_name()
 
 
 class Player:
@@ -248,9 +241,11 @@ class Player:
     A class to represent each player. Contains player token and name.
     '''
 
-    def __init__(self, name, token):
+    def __init__(self, name, token, ai=False, ai_strategy=None):
         self.name = name
         self.token = token
+        self.ai = ai
+        self.ai_strategy = ai_strategy
 
     def get_token(self):
         return self.token
