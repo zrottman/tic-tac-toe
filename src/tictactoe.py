@@ -1,4 +1,5 @@
 import os
+import random
 
 class Board:
     '''
@@ -179,6 +180,10 @@ class Board:
         else:
             return False
 
+    def get_available_spaces(self):
+        return [i for i, space in enumerate(self.board) if space == ' ']
+
+    
 
 class Game:
     '''
@@ -243,7 +248,7 @@ class Game:
                 # Get open slots and choose one
             else:
                 cur_row = int(input("Row (0-2)? "))
-                cur_col = int(input("Col (0-2? "))
+                cur_col = int(input("Col (0-2)? "))
 
             # Validate input
             if self.board.update_board(self.get_current_player_token(), (cur_row, cur_col)):
@@ -275,6 +280,13 @@ class Player:
 
     def get_name(self):
         return self.name
+
+    def choose_position(self, board):
+        available_positions = board.get_available_space()
+        return random.choice(available_positions)
+
+
+
 
 
 if __name__ == '__main__':
