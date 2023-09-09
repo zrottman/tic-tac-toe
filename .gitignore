@@ -6,3 +6,4 @@ __pycache__
 
 # Ignore project image directory
 projectimages/
+tapes/
